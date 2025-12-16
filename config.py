@@ -1,0 +1,36 @@
+"""
+Configuration settings for Gemscap Quant Dashboard
+"""
+
+# Data Ingestion Settings
+DEFAULT_SYMBOLS = ["btcusdt", "ethusdt"]
+MAX_SYMBOLS = 5
+WEBSOCKET_TIMEOUT = 30
+WEBSOCKET_PING_INTERVAL = 20
+MAX_RETRIES = 5
+
+# Analytics Settings
+DEFAULT_WINDOW = 50
+MIN_WINDOW = 10
+MAX_WINDOW = 200
+DEFAULT_Z_THRESHOLD = 2.0
+MIN_DATA_POINTS_ADF = 20
+
+# Database Settings
+MAX_TICKS_STORED = 100000
+CLEANUP_THRESHOLD = 50000
+DB_TIMEOUT = 10.0
+
+# UI Settings
+DEFAULT_TIMEFRAME = "1m"
+AVAILABLE_TIMEFRAMES = ["1s", "1m", "5m"]
+CHART_HEIGHT = 380
+CHART_TAIL_LIMIT = 400
+
+# Performance Settings
+AUTO_REFRESH_DELAY = 0.5  # seconds
+MAX_DATAFRAME_ROWS = 100000
+
+# Deployment Settings
+STREAMLIT_PORT = 8501
+STREAMLIT_ADDRESS = "0.0.0.0"
