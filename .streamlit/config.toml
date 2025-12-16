@@ -3,13 +3,11 @@ primaryColor = "#2563eb"
 backgroundColor = "#ffffff"
 secondaryBackgroundColor = "#f8fafc"
 textColor = "#1e293b"
-font = "sans serif"
 
 [server]
 headless = true
-port = 8501
 enableCORS = true
-enableXsrfProtection = true
+fileWatcherType = "none"
 
 [browser]
 gatherUsageStats = false
