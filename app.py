@@ -307,22 +307,31 @@ c1, c2 = st.sidebar.columns(2)
 with c1:
     start_btn = st.button("▶ Start", use_container_width=True, key="start_btn")
     if start_btn and not st.session_state.streaming:
-        def run_async_stream():
-            loop = asyncio.new_event_loop()
-            asyncio.set_event_loop(loop)
-            loop.run_until_complete(start_stream(symbols))
-        
-        st.session_state.thread = threading.Thread(target=run_async_stream, daemon=True)
-        st.session_state.thread.start()
-        st.session_state.streaming = True
-        st.rerun()
+        try:
+            def run_async_stream():
+                loop = asyncio.new_event_loop()
+                asyncio.set_event_loop(loop)
+                loop.run_until_complete(start_stream(symbols))
+            
+            st.session_state.thread = threading.Thread(target=run_async_stream, daemon=True)
+            st.session_state.thread.start()
+            st.session_state.streaming = True
+            st.success("Stream started! (May take a few seconds to connect)")
+            st.rerun()
+        except Exception as e:
+            st.error(f"Failed to start stream: {e}")
+            st.info("💡 WebSocket connections may be restricted on Streamlit Cloud. Try running locally for full functionality.")
 
 with c2:
     stop_btn = st.button("⏹ Stop", use_container_width=True, key="stop_btn")
     if stop_btn and st.session_state.streaming:
-        stop_stream()
-        st.session_state.streaming = False
-        st.rerun()
+        try:
+            stop_stream()
+            st.session_state.streaming = False
+            st.success("Stream stopped!")
+            st.rerun()
+        except Exception as e:
+            st.error(f"Error stopping stream: {e}")
 
 st.sidebar.markdown("### 📊 Analytics Settings")
 
@@ -368,14 +377,30 @@ if st.session_state.streaming:
 # ================= LOAD DATA =================
 rows = get_all_ticks()
 if not rows:
-    st.info("⏳ Waiting for live data... Click 'Start Stream' to begin ingestion.")
-    st.stop()
-
-try:
-    df = prepare_df(rows)
-except Exception as e:
-    st.error(f"Error preparing data: {e}")
-    st.stop()
+    st.info("⏳ No data available. Click 'Start Stream' to begin ingestion.")
+    st.info("📝 **Note**: WebSocket streaming may be limited on Streamlit Cloud. For full functionality, run locally.")
+    
+    # Create sample data for demo purposes
+    import numpy as np
+    from datetime import datetime, timedelta
+    
+    sample_data = []
+    base_time = datetime.now()
+    for i in range(100):
+        for symbol in ["btcusdt", "ethusdt"]:
+            price = 50000 + np.random.normal(0, 100) if symbol == "btcusdt" else 3000 + np.random.normal(0, 50)
+            qty = np.random.uniform(0.01, 1.0)
+            ts = (base_time - timedelta(seconds=100-i)).isoformat()
+            sample_data.append((ts, symbol, price, qty))
+    
+    df = prepare_df(sample_data)
+    st.warning("📊 Showing sample data for demonstration. Start streaming for live data.")
+else:
+    try:
+        df = prepare_df(rows)
+    except Exception as e:
+        st.error(f"Error preparing data: {e}")
+        st.stop()
 
 # ================= KPI ROW =================
 k1, k2, k3 = st.columns(3)

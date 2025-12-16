@@ -16,6 +16,12 @@ async def _listen_symbol(symbol):
     
     print(f"[{symbol}] Starting WebSocket connection...")
     
+    # Check if running in cloud environment
+    import os
+    is_cloud = os.getenv('STREAMLIT_SHARING_MODE') or os.getenv('STREAMLIT_CLOUD')
+    if is_cloud:
+        print(f"[{symbol}] ⚠️ Running in cloud environment - WebSocket may be restricted")
+    
     try:
         while _running and retry_count < max_retries:
             try:
